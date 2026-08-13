@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#08111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CyberQuest">
+<title>CyberQuest</title>
+
+<style>
+:root{--bg:#08111f;--panel:#111d30;--panel2:#182945;--txt:#f7fbff;--muted:#a9bad1;--line:#29405f;--good:#62e5aa;--bad:#ff7183;--gold:#ffd36a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{overscroll-behavior:none}
+button{font:inherit}
+.app{max-width:760px;margin:auto;padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 96px)}
+.screen{display:none}.screen.active{display:block}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 2px 16px}
+.brand{font-size:24px;font-weight:900}.chip{font-size:12px;color:var(--muted);border:1px solid var(--line);background:var(--panel);padding:8px 10px;border-radius:999px}
+.hero{padding:20px;border-radius:24px;background:linear-gradient(135deg,rgba(98,229,170,.16),rgba(103,166,255,.13));border:1px solid var(--line)}
+.hero h1{margin:0 0 8px;font-size:30px;line-height:1.05}.hero p{margin:0;color:var(--muted);line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:12px;text-align:center}.stat b{display:block;font-size:21px}.stat span{font-size:11px;color:var(--muted)}
+.bar{height:10px;border-radius:99px;border:1px solid var(--line);overflow:hidden;margin-top:14px;background:#07101c}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--good),#67a6ff)}
+.primary,.secondary,.badbtn{width:100%;border-radius:16px;padding:15px;border:0;font-weight:850;cursor:pointer}
+.primary{background:var(--good);color:#04110a}.secondary{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}.badbtn{background:#421a24;color:#ffdce1;border:1px solid #703041}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{min-height:145px;text-align:left;padding:15px;border-radius:19px;background:var(--panel);color:var(--txt);border:1px solid var(--line)}.tile .ico{font-size:29px;display:block;margin-bottom:10px}.tile b{font-size:16px}.tile small{display:block;color:var(--muted);line-height:1.35;margin-top:6px}
+h2{font-size:18px;margin:21px 2px 11px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:17px}
+.module{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px;margin-bottom:10px}.moduleHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.module p{color:var(--muted);font-size:13px;line-height:1.4;margin:6px 0 0}.lesson{display:none;margin-top:10px;background:#0c1727;border:1px solid var(--line);border-radius:14px;padding:13px;line-height:1.55;color:#dce8f8}
+.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}.question{font-size:21px;font-weight:900;line-height:1.32;margin:14px 0}.answers{display:grid;gap:9px}.answer{padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);text-align:left;line-height:1.35}.answer.good{border-color:var(--good);background:rgba(98,229,170,.12)}.answer.bad{border-color:var(--bad);background:rgba(255,113,131,.12)}
+.explain{display:none;margin-top:12px;background:#0c1727;border:1px solid var(--line);border-radius:14px;padding:13px;color:#d7e4f5;line-height:1.45}
+.row{display:flex;gap:9px;margin-top:11px}.row>*{flex:1}
+.flash{min-height:280px;border-radius:22px;background:linear-gradient(135deg,#1a2d4c,#0d1829);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;font-size:22px;font-weight:900;line-height:1.35}.flash.back{font-size:17px;font-weight:650}
+.install{background:#17233a;border:1px solid var(--line);padding:14px;border-radius:17px;margin-top:14px;color:#d7e5f7;line-height:1.45}.install b{color:white}
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 8px);width:min(720px,calc(100% - 16px));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:7px;background:rgba(13,23,39,.96);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:20px}.nav button{border:0;background:transparent;color:var(--muted);padding:8px 2px;border-radius:13px;font-size:11px}.nav button.active{background:var(--panel2);color:var(--txt)}.nav span{display:block;font-size:20px}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 10px);transform:translateX(-50%);opacity:0;pointer-events:none;transition:.2s;z-index:99;background:#15243a;border:1px solid var(--line);border-radius:999px;padding:10px 14px}.toast.show{opacity:1}
+@media(max-width:390px){.hero h1{font-size:26px}.question{font-size:19px}.tile{min-height:132px}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<main class="app">
+<section id="home" class="screen active">
+ <div class="top"><div class="brand">🛡️ CyberQuest</div><div class="chip">Security+ SY0-701</div></div>
+ <div class="hero">
+  <h1>Study. Play. Level up.</h1>
+  <p>Every game mode teaches real Security+ material. Wrong answers are saved for review.</p>
+  <div class="bar"><i id="xpBar"></i></div>
+  <div id="levelText" style="margin-top:7px;color:var(--muted);font-size:12px">Level 1</div>
+ </div>
+ <div class="stats">
+   <div class="stat"><b id="xp">0</b><span>XP</span></div>
+   <div class="stat"><b id="streak">1</b><span>STREAK</span></div>
+   <div class="stat"><b id="accuracy">0%</b><span>ACCURACY</span></div>
+ </div>
+ <button class="primary" onclick="startQuiz('mixed')">⚔️ Start 10-question battle</button>
+ <h2>Game modes</h2>
+ <div class="grid">
+   <button class="tile" onclick="showScreen('learn')"><span class="ico">📘</span><b>Learn</b><small>Short lessons before the quiz.</small></button>
+   <button class="tile" onclick="startQuiz('mixed')"><span class="ico">🎯</span><b>Quiz Battle</b><small>Earn XP for correct answers.</small></button>
+   <button class="tile" onclick="startFlashcards()"><span class="ico">🧠</span><b>Flashcards</b><small>Tap, flip, remember.</small></button>
+   <button class="tile" onclick="startQuiz('wrong')"><span class="ico">🔥</span><b>Fix Mistakes</b><small>Only your missed questions.</small></button>
+ </div>
+ <div class="install" id="installHelp"><b>iPhone tip:</b> when this app is hosted on an HTTPS website, open it in Safari → Share → Add to Home Screen. Then it opens full-screen like an app.</div>
+</section>
+
+<section id="learn" class="screen">
+ <div class="top"><div class="brand">📘 Learn</div><div class="chip">6 modules</div></div>
+ <div id="modules"></div>
+</section>
+
+<section id="quiz" class="screen">
+ <div class="top"><div class="brand">🎯 Quiz Battle</div><div class="chip" id="quizXP">0 XP</div></div>
+ <div class="panel">
+   <div class="qmeta"><span id="qnum"></span><span id="lives"></span></div>
+   <div id="question" class="question"></div>
+   <div id="answers" class="answers"></div>
+   <div id="explain" class="explain"></div>
+   <button id="nextBtn" class="primary" style="display:none;margin-top:12px" onclick="nextQuestion()">Next →</button>
+ </div>
+</section>
+
+<section id="flashcards" class="screen">
+ <div class="top"><div class="brand">🧠 Flashcards</div><div class="chip" id="flashNum"></div></div>
+ <div class="panel">
+   <div id="flash" class="flash" onclick="flipCard()">Tap to flip</div>
+   <div class="row"><button class="badbtn" onclick="rateCard(false)">Again</button><button class="primary" onclick="rateCard(true)">Got it +5 XP</button></div>
+ </div>
+</section>
+</main>
+
+<nav class="nav">
+ <button id="nav-home" class="active" onclick="showScreen('home')"><span>🏠</span>Home</button>
+ <button id="nav-learn" onclick="showScreen('learn')"><span>📘</span>Learn</button>
+ <button id="nav-quiz" onclick="startQuiz('mixed')"><span>🎯</span>Quiz</button>
+ <button id="nav-flashcards" onclick="startFlashcards()"><span>🧠</span>Cards</button>
+</nav>
+
+<script>
+"use strict";
+
+const lessons=[
+["🛡️","Security Foundations","CIA, AAA, non-repudiation, risk, and controls.","CIA = Confidentiality, Integrity, Availability. AAA = Authentication, Authorization, Accounting. Non-repudiation provides evidence that a party performed an action. Controls may be preventive, detective, corrective, deterrent, compensating, or directive."],
+["☠️","Threats & Attacks","Phishing, malware, social engineering, password attacks.","Phishing uses deceptive messages or pages to steal information. Ransomware blocks or encrypts data for payment. Credential stuffing reuses stolen username/password pairs. A zero-day is exploited before a fix is available."],
+["🔐","Identity & Access","MFA, least privilege, RBAC, SSO, federation.","Least privilege grants only needed permissions. MFA uses different factor categories: something you know, have, or are. RBAC assigns permissions based on job roles. SSO lets one login session access multiple approved services."],
+["🌐","Network Security","Ports, firewalls, segmentation, VPNs, DNS.","HTTPS commonly uses TCP 443. SSH uses TCP 22. DNS commonly uses port 53. Segmentation reduces lateral movement. Firewalls filter traffic. VPNs create encrypted tunnels over untrusted networks."],
+["🔑","Cryptography & PKI","Hashing, encryption, signatures, certificates.","Hashing is one-way and commonly verifies integrity. Encryption is reversible with the right key. Digital signatures support integrity, authentication, and non-repudiation. PKI uses certificates and trusted certificate authorities."],
+["🚨","Detection & Response","SIEM, DLP, logs, incident response, recovery.","A SIEM collects and correlates logs. DLP helps prevent sensitive data from leaving approved locations. Incident response commonly includes preparation, detection/analysis, containment, eradication, recovery, and lessons learned."]
+];
+
+const questions=[
+["Which part of the CIA triad prevents unauthorized disclosure?",["Confidentiality","Integrity","Availability","Accounting"],0,"Confidentiality protects data from unauthorized access or disclosure."],
+["Which principle gives only the permissions needed for a job?",["High availability","Least privilege","Open access","Non-repudiation"],1,"Least privilege limits unnecessary access."],
+["Which protocol commonly uses TCP port 443?",["SSH","HTTP","HTTPS","DNS"],2,"HTTPS commonly uses TCP port 443."],
+["What does a cryptographic hash primarily help verify?",["Confidentiality","Integrity","Availability","Authentication only"],1,"Hashes are commonly used to verify that data has not been altered."],
+["Which platform collects and correlates security logs?",["SIEM","UPS","RAID","NAT"],0,"SIEM means Security Information and Event Management."],
+["A fake Microsoft 365 login page steals passwords. What attack is this?",["Phishing","Tailgating","DDoS","Shoulder surfing"],0,"A deceptive page designed to steal credentials is phishing."],
+["Which MFA factor is 'something you are'?",["Password","Security token","Fingerprint","PIN"],2,"A fingerprint is a biometric/inherence factor."],
+["Why is network segmentation useful?",["Makes passwords longer","Limits lateral movement","Replaces backups","Removes encryption"],1,"Segmentation limits access between network areas."],
+["Which technology helps stop sensitive data leaving an organization?",["DLP","DHCP","NTP","ARP"],0,"DLP means Data Loss Prevention."],
+["A digital signature can provide:",["Only confidentiality","Integrity, authentication, non-repudiation","Only availability","Faster networking"],1,"Digital signatures help prove origin and detect alteration."],
+["Which protocol commonly uses TCP port 22?",["SSH","HTTPS","SMTP","RDP"],0,"SSH commonly uses TCP 22."],
+["Credential stuffing means:",["Trying reused stolen username/password pairs","Stealing a badge","Encrypting files","Scanning ports"],0,"Credential stuffing exploits password reuse."],
+["Which access model assigns permissions by job role?",["RBAC","MAC filtering","Hashing","Tokenization"],0,"RBAC is Role-Based Access Control."],
+["A vulnerability exploited before a patch exists is commonly called:",["Zero-day","Warm site","Baseline","False positive"],0,"A zero-day may be exploited before a vendor fix is available."],
+["Which control is meant to stop an incident before it happens?",["Preventive","Detective","Corrective","Recovery"],0,"Preventive controls try to prevent unwanted events."],
+["Which control identifies that an event happened?",["Detective","Preventive","Directive","Compensating"],0,"Detective controls discover events."],
+["What is the main purpose of a VPN?",["Create an encrypted tunnel","Delete malware","Replace MFA","Issue certificates"],0,"A VPN creates an encrypted tunnel over a network."],
+["Who commonly issues trusted digital certificates in PKI?",["Certificate Authority","DHCP server","IDS sensor","Proxy"],0,"A Certificate Authority signs and issues certificates."],
+["Ransomware is:",["Malware that blocks/encrypts data for payment","A secure backup","A firewall rule","A password manager"],0,"Ransomware commonly encrypts or blocks data and demands payment."],
+["After containment in incident response, what commonly comes next?",["Eradication","Ignore it","Delete all logs","Disable backups"],0,"Eradication removes the root cause after containment."],
+["Which AAA function records activity?",["Accounting","Authentication","Authorization","Availability"],0,"Accounting records actions and usage."],
+["Which AAA function verifies identity?",["Authentication","Authorization","Accounting","Availability"],0,"Authentication establishes identity."],
+["Which AAA function decides what an authenticated user may do?",["Authorization","Authentication","Accounting","Integrity"],0,"Authorization determines permissions."],
+["Encryption is best described as:",["A reversible transformation using the correct key","A one-way integrity check only","A physical control","A backup schedule"],0,"Encryption is designed to be reversed by authorized users with the appropriate key."]
+];
+
+const cards=[
+["CIA Triad","Confidentiality, Integrity, Availability."],["AAA","Authentication, Authorization, Accounting."],
+["Least privilege","Give only the minimum permissions necessary."],["Non-repudiation","Evidence that a specific party performed an action."],
+["SIEM","Collects and correlates logs/events for security monitoring."],["DLP","Data Loss Prevention."],
+["SSH","Secure remote shell; commonly TCP 22."],["HTTPS","Encrypted web traffic; commonly TCP 443."],
+["DNS","Domain Name System; commonly port 53."],["RBAC","Permissions based on job role."],
+["MFA","Authentication using factors from different categories."],["Hashing","One-way function commonly used to verify integrity."],
+["Digital signature","Supports integrity, authentication, and non-repudiation."],["Certificate Authority","Trusted PKI entity that signs/issues certificates."],
+["Segmentation","Divides a network to reduce access and lateral movement."]
+];
+
+const STORAGE="cyberquest_ios_v2";
+let state={xp:0,correct:0,answered:0,wrong:[],streak:1,lastDay:""};
+try{const saved=JSON.parse(localStorage.getItem(STORAGE)||"null"); if(saved&&typeof saved==="object") state=Object.assign(state,saved)}catch(e){}
+let quiz=[],qi=0,score=0,lives=3,locked=false,fi=0,flipped=false;
+
+function persist(){
+ try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){}
+ updateStats();
+}
+function today(){return new Date().toLocaleDateString("en-CA")}
+function updateStreak(){
+ const t=today();
+ if(!state.lastDay){state.lastDay=t;state.streak=1;return}
+ if(state.lastDay===t)return;
+ const a=new Date(state.lastDay+"T12:00:00"),b=new Date(t+"T12:00:00");
+ const d=Math.round((b-a)/86400000);
+ state.streak=d===1?state.streak+1:1; state.lastDay=t;
+}
+function updateStats(){
+ updateStreak();
+ byId("xp").textContent=state.xp;
+ byId("streak").textContent=state.streak;
+ byId("accuracy").textContent=state.answered?Math.round(state.correct/state.answered*100)+"%":"0%";
+ const level=Math.floor(state.xp/200)+1,part=state.xp%200;
+ byId("xpBar").style.width=(part/2)+"%";
+ byId("levelText").textContent="Level "+level+" • "+part+"/200 XP";
+ try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){}
+}
+function byId(id){return document.getElementById(id)}
+function showScreen(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ byId(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ const n=byId("nav-"+id); if(n)n.classList.add("active");
+ window.scrollTo(0,0);
+}
+function toast(s){const t=byId("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1000)}
+function renderLessons(){
+ byId("modules").innerHTML=lessons.map((m,i)=>`<div class="module"><div class="moduleHead"><div><b>${m[0]} ${m[1]}</b><p>${m[2]}</p></div><button class="secondary" style="width:auto;padding:9px 11px" onclick="toggleLesson(${i})">Open</button></div><div id="lesson${i}" class="lesson">${m[3]}</div></div>`).join("");
+}
+function toggleLesson(i){const el=byId("lesson"+i);el.style.display=el.style.display==="block"?"none":"block"}
+function shuffled(a){const x=a.slice();for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function startQuiz(mode){
+ const pool=(mode==="wrong"&&state.wrong.length)?state.wrong.map(i=>questions[i]):questions;
+ if(mode==="wrong"&&!state.wrong.length)toast("No saved mistakes yet — mixed quiz started");
+ quiz=shuffled(pool).slice(0,10); qi=0;score=0;lives=3;locked=false;showScreen("quiz");renderQuestion();
+}
+function renderQuestion(){
+ if(qi>=quiz.length||lives<=0){finishQuiz();return}
+ locked=false;const q=quiz[qi];
+ byId("qnum").textContent="Question "+(qi+1)+"/"+quiz.length;
+ byId("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);
+ byId("question").textContent=q[0];
+ byId("answers").innerHTML=q[1].map((a,i)=>`<button class="answer" onclick="answer(${i},this)">${a}</button>`).join("");
+ byId("explain").style.display="none";byId("nextBtn").style.display="none";byId("quizXP").textContent=(score*20)+" XP";
+}
+function answer(choice,btn){
+ if(locked)return;locked=true;const q=quiz[qi],buttons=[...document.querySelectorAll(".answer")];
+ state.answered++;const idx=questions.findIndex(x=>x[0]===q[0]);
+ if(choice===q[2]){btn.classList.add("good");score++;state.correct++;state.xp+=20;state.wrong=state.wrong.filter(x=>x!==idx);toast("+20 XP")}
+ else{btn.classList.add("bad");buttons[q[2]].classList.add("good");lives=Math.max(0,lives-1);if(idx>=0&&!state.wrong.includes(idx))state.wrong.push(idx)}
+ byId("explain").textContent=q[3];byId("explain").style.display="block";byId("nextBtn").style.display="block";byId("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);persist();
+}
+function nextQuestion(){qi++;renderQuestion()}
+function finishQuiz(){
+ const pct=quiz.length?Math.round(score/quiz.length*100):0;
+ byId("quiz").innerHTML=`<div class="top"><div class="brand">🏁 Results</div><div class="chip">${score*20} XP</div></div><div class="panel" style="text-align:center"><div style="font-size:56px">${pct>=80?"🏆":"🛡️"}</div><h2 style="font-size:27px">${score}/${quiz.length} correct</h2><p style="color:var(--muted)">${pct>=80?"Excellent. Keep the streak going.":pct>=60?"Good work. Review your mistakes next.":"Use Fix Mistakes and turn misses into points."}</p><div class="stats"><div class="stat"><b>${pct}%</b><span>SCORE</span></div><div class="stat"><b>${score*20}</b><span>XP EARNED</span></div><div class="stat"><b>${state.wrong.length}</b><span>TO REVIEW</span></div></div><button class="primary" onclick="location.reload()">Back Home</button></div>`;
+ persist();
+}
+function startFlashcards(){fi=0;flipped=false;showScreen("flashcards");renderCard()}
+function renderCard(){const c=cards[fi%cards.length];byId("flash").textContent=flipped?c[1]:c[0];byId("flash").className="flash"+(flipped?" back":"");byId("flashNum").textContent=(fi+1)+"/"+cards.length}
+function flipCard(){flipped=!flipped;renderCard()}
+function rateCard(ok){if(ok){state.xp+=5;persist();toast("+5 XP")}fi=(fi+1)%cards.length;flipped=false;renderCard()}
+
+renderLessons();updateStats();
+
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+ navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
